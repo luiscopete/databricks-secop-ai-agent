@@ -119,6 +119,9 @@ targets:
     mode: development
     default: true
 
+    variables:
+      experiment_id: "4487885633699270"
+
   prod:
     mode: production
     resources:
