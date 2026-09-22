@@ -84,7 +84,7 @@ def main() -> None:
 
     try:
         backend = subprocess.Popen(
-            ["uv", "run", "start-server", "--host", "0.0.0.0", "--port", str(backend_port)],
+            ["uv", "run", "start-server", "--port", str(backend_port)],
             cwd=ROOT,
         )
 
