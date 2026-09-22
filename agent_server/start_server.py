@@ -1,0 +1,18 @@
+from pathlib import Path
+
+from dotenv import load_dotenv
+from mlflow.genai.agent_server import AgentServer, setup_mlflow_git_based_version_tracking
+
+# Local development can place Databricks authentication/config values in .env.
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env", override=True)
+
+# Importing agent.py registers the @invoke and @stream handlers.
+import agent_server.agent  # noqa: E402,F401
+
+agent_server = AgentServer("ResponsesAgent", enable_chat_proxy=True)
+app = agent_server.app
+setup_mlflow_git_based_version_tracking()
+
+
+def main() -> None:
+    agent_server.run(app_import_string="agent_server.start_server:app")

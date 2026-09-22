@@ -1,0 +1,9 @@
+.venv/
+.env
+__pycache__/
+*.py[cod]
+backend.log
+frontend.log
+.tmp-app-templates/
+e2e-chatbot-app-next/node_modules/
+.databricks/

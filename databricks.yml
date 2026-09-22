@@ -1,0 +1,127 @@
+bundle:
+  name: secop_ai
+
+variables:
+  experiment_id:
+    description: "Existing MLflow experiment ID used for agent traces"
+  catalog:
+    description: "Unity Catalog catalog containing the SECOP tools"
+    default: "secop_ai"
+  tools_schema:
+    description: "Unity Catalog schema containing the SECOP UC functions"
+    default: "ai_agents_tools"
+  model_endpoint:
+    description: "Databricks Foundation Model endpoint used by the agent"
+    default: "databricks-gpt-oss-120b"
+
+resources:
+  apps:
+    secop_ai:
+      name: "agent-secop-ai"
+      description: "SECOP AI assistant"
+      source_code_path: ./
+
+      config:
+        command: ["uv", "run", "start-app"]
+        env:
+          - name: MLFLOW_TRACKING_URI
+            value: "databricks"
+          - name: MLFLOW_REGISTRY_URI
+            value: "databricks-uc"
+          - name: API_PROXY
+            value: "http://localhost:8000/invocations"
+          - name: CHAT_APP_PORT
+            value: "3000"
+          - name: CHAT_PROXY_TIMEOUT_SECONDS
+            value: "300"
+          - name: MLFLOW_EXPERIMENT_ID
+            value_from: "experiment"
+          - name: CATALOG
+            value: ${var.catalog}
+          - name: SECOP_AI_TOOLS_SCHEMA
+            value: ${var.tools_schema}
+          - name: MODEL_ENDPOINT
+            value: ${var.model_endpoint}
+
+      resources:
+        - name: "experiment"
+          experiment:
+            experiment_id: ${var.experiment_id}
+            permission: "CAN_MANAGE"
+
+        - name: "llm"
+          serving_endpoint:
+            name: ${var.model_endpoint}
+            permission: "CAN_QUERY"
+
+        - name: "search_contracts"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.search_contracts
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "contracts_by_budget"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.contracts_by_budget
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "contracts_by_entity"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.contracts_by_entity
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "contracts_by_location"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.contracts_by_location
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "contracts_by_type"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.contracts_by_type
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "high_value_contracts"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.high_value_contracts
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "recent_contracts"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.recent_contracts
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "summary_by_department"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.summary_by_department
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "fetch_contract_files"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.fetch_contract_files
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+        - name: "format_contract_info"
+          uc_securable:
+            securable_full_name: ${var.catalog}.${var.tools_schema}.format_contract_info
+            securable_type: "FUNCTION"
+            permission: "EXECUTE"
+
+targets:
+  dev:
+    mode: development
+    default: true
+
+  prod:
+    mode: production
+    resources:
+      apps:
+        secop_ai:
+          name: "agent-secop-ai"
