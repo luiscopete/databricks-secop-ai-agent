@@ -1,23 +1,14 @@
-import logging
-
 from agents import Agent
 from databricks_openai.agents import McpServer
 
 from agent_server.config import MODEL_ENDPOINT
 
 
-logger = logging.getLogger(__name__)
-
-
 def create_secop_ai_agent(secop_ai_mcp: McpServer) -> Agent:
 
-    """Create the single SECOP AI agent and attach its managed MCP tools."""
-
-    # Temporary debug log to verify which model
-    # the Databricks App is actually using.
-    logger.info(
-        "Creating SECOP AI agent with model endpoint: %s",
-        MODEL_ENDPOINT,
+    print(
+        f"### MODEL_ENDPOINT IN USE: {MODEL_ENDPOINT} ###",
+        flush=True,
     )
 
     return Agent(
@@ -40,6 +31,5 @@ contracts on tool results.
 """.strip(),
 
         model=MODEL_ENDPOINT,
-
         mcp_servers=[secop_ai_mcp],
     )

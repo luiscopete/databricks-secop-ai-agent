@@ -18,4 +18,4 @@ env:
   - name: SECOP_AI_TOOLS_SCHEMA
     value: "ai_agents_tools"
   - name: MODEL_ENDPOINT
-    value: "databricks-gpt-oss-120b"
+    value: ${var.model_endpoint}
