@@ -12,7 +12,7 @@ variables:
     default: "ai_agents_tools"
   model_endpoint:
     description: "Databricks Foundation Model endpoint used by the agent"
-    default: "databricks-gpt-oss-120b"
+    default: "databricks-meta-llama-3-3-70b-instruct"
 
 resources:
   apps:
