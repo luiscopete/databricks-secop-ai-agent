@@ -121,6 +121,7 @@ targets:
 
     variables:
       experiment_id: "4487885633699270"
+      model_endpoint: "databricks-meta-llama-3-3-70b-instruct"
 
   prod:
     mode: production
