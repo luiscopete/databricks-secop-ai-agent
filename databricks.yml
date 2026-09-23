@@ -10,11 +10,135 @@ variables:
   tools_schema:
     description: "Unity Catalog schema containing the SECOP UC functions"
     default: "ai_agents_tools"
+  gold_schema:
+    description: "Unity Catalog schema containing the SECOP Gold tables"
+    default: "gold"
+  sql_warehouse_id:
+    description: "Existing Databricks SQL Warehouse ID used to deploy UC functions"
   model_endpoint:
     description: "Databricks Foundation Model endpoint used by the agent"
     default: "databricks-meta-llama-3-3-70b-instruct"
 
 resources:
+  jobs:
+    deploy_uc_tools:
+      name: "${bundle.target}-secop-ai-deploy-uc-tools"
+      tasks:
+        - task_key: "create_schema"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/00_create_schema.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_contracts_by_budget"
+          depends_on:
+            - task_key: "create_schema"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/01_contracts_by_budget.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_contracts_by_location"
+          depends_on:
+            - task_key: "deploy_contracts_by_budget"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/02_contracts_by_location.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_contracts_by_type"
+          depends_on:
+            - task_key: "deploy_contracts_by_location"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/03_contracts_by_type.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_summary_by_department"
+          depends_on:
+            - task_key: "deploy_contracts_by_type"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/04_summary_by_department.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_contracts_by_entity"
+          depends_on:
+            - task_key: "deploy_summary_by_department"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/05_contracts_by_entity.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_high_value_contracts"
+          depends_on:
+            - task_key: "deploy_contracts_by_entity"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/06_high_value_contracts.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_format_contract_info"
+          depends_on:
+            - task_key: "deploy_high_value_contracts"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/07_format_contract_info.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
+        - task_key: "deploy_recent_contracts"
+          depends_on:
+            - task_key: "deploy_format_contract_info"
+          sql_task:
+            file:
+              path: "${workspace.file_path}/uc_tools/sql/08_recent_contracts.sql"
+              source: "WORKSPACE"
+            warehouse_id: "${var.sql_warehouse_id}"
+            parameters:
+              catalog: "${var.catalog}"
+              tools_schema: "${var.tools_schema}"
+              gold_schema: "${var.gold_schema}"
+
   apps:
     secop_ai:
       name: "agent-secop-ai"

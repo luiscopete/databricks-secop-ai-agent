@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.format_contract_info(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.format_contract_info(
     proceso_id STRING COMMENT 'Contract process ID to format'
 )
 RETURNS STRING
@@ -15,7 +15,7 @@ RETURN (
         'Status: ', estado_procedimiento, ' (', fase, ')\n',
         'Published: ', DATE_FORMAT(fecha_publicacion, 'yyyy-MM-dd')
     )
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE id_proceso = proceso_id
     LIMIT 1
 );

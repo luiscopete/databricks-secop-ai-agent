@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.contracts_by_budget(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.contracts_by_budget(
     min_budget DOUBLE COMMENT 'Minimum budget in COP',
     max_budget DOUBLE COMMENT 'Maximum budget in COP'
 )
@@ -23,7 +23,7 @@ RETURN
         entidad_departamento,
         entidad_ciudad,
         estado_procedimiento
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE precio_base BETWEEN min_budget AND max_budget
     ORDER BY precio_base DESC
     LIMIT 100;

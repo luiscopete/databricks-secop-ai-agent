@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.contracts_by_type(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.contracts_by_type(
     contract_type STRING COMMENT 'Contract type (e.g., "Prestación de servicios", "Compraventa")'
 )
 RETURNS TABLE(
@@ -24,7 +24,7 @@ RETURN
         duracion,
         duracion_unidad,
         entidad_departamento
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE LOWER(tipo_contrato) LIKE CONCAT('%', LOWER(contract_type), '%')
     ORDER BY precio_base DESC
     LIMIT 100;

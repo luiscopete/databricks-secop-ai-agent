@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.summary_by_department(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.summary_by_department(
     departamento STRING COMMENT 'Department name to analyze'
 )
 RETURNS STRING
@@ -14,7 +14,7 @@ RETURN (
         'Maximum Budget: $', FORMAT_NUMBER(MAX(precio_base), 0), ' COP\n',
         'Unique Entities: ', COUNT(DISTINCT entidad_nombre)
     )
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE LOWER(entidad_departamento) = LOWER(departamento)
     GROUP BY entidad_departamento
     LIMIT 1

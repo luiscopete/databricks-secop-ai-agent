@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.contracts_by_entity(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.contracts_by_entity(
     nit STRING COMMENT 'Entity NIT number'
 )
 RETURNS TABLE(
@@ -24,7 +24,7 @@ RETURN
         estado_procedimiento,
         fecha_publicacion,
         fecha_ultima_publicacion
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE entidad_nit = nit
     ORDER BY fecha_ultima_publicacion DESC
     LIMIT 100;

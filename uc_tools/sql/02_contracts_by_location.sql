@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.contracts_by_location(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.contracts_by_location(
     departamento STRING COMMENT 'Department name (e.g., "Bogotá D.C.", "Antioquia")'
 )
 RETURNS TABLE(
@@ -22,7 +22,7 @@ RETURN
         precio_base,
         estado_procedimiento,
         fecha_ultima_publicacion
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE LOWER(entidad_departamento) = LOWER(departamento)
     ORDER BY fecha_ultima_publicacion DESC
     LIMIT 100;

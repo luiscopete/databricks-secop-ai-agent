@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.high_value_contracts(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.high_value_contracts(
     threshold DOUBLE COMMENT 'Minimum budget threshold in COP (default: 100,000,000)'
 )
 RETURNS TABLE(
@@ -22,7 +22,7 @@ RETURN
         entidad_departamento,
         modalidad_contratacion,
         estado_procedimiento
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE precio_base >= threshold
     ORDER BY precio_base DESC
     LIMIT 100;

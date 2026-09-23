@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION secop_ai.ai_agents_tools.recent_contracts(
+CREATE OR REPLACE FUNCTION {{catalog}}.{{tools_schema}}.recent_contracts(
     days_back INT COMMENT 'Number of days to look back (default: 7)'
 )
 RETURNS TABLE(
@@ -25,7 +25,7 @@ RETURN
             CURRENT_DATE(),
             DATE(fecha_ultima_publicacion)
         ) AS days_since_publication
-    FROM secop_ai.gold.available_contracts
+    FROM {{catalog}}.{{gold_schema}}.available_contracts
     WHERE fecha_ultima_publicacion >= DATE_SUB(CURRENT_DATE(), days_back)
     ORDER BY fecha_ultima_publicacion DESC
     LIMIT 100;
