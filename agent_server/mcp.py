@@ -24,4 +24,5 @@ def create_secop_ai_mcp(workspace_client: WorkspaceClient) -> McpServer:
         ),
         name="secop-ai-tools",
         workspace_client=workspace_client,
+        timeout=60,
     )
