@@ -27,6 +27,30 @@ resources:
             experiment_id: ${var.experiment_id}
             permission: "CAN_MANAGE"
 
+        - name: "trace_annotations"
+          uc_securable:
+            securable_full_name: "${var.catalog}.observability.${var.experiment_id}_otel_annotations"
+            securable_type: "TABLE"
+            permission: "MODIFY"
+
+        - name: "trace_logs"
+          uc_securable:
+            securable_full_name: "${var.catalog}.observability.${var.experiment_id}_otel_logs"
+            securable_type: "TABLE"
+            permission: "MODIFY"
+
+        - name: "trace_metrics"
+          uc_securable:
+            securable_full_name: "${var.catalog}.observability.${var.experiment_id}_otel_metrics"
+            securable_type: "TABLE"
+            permission: "MODIFY"
+
+        - name: "trace_spans"
+          uc_securable:
+            securable_full_name: "${var.catalog}.observability.${var.experiment_id}_otel_spans"
+            securable_type: "TABLE"
+            permission: "MODIFY"
+
         - name: "llm"
           serving_endpoint:
             name: ${var.model_endpoint}
