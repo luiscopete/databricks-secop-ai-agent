@@ -98,7 +98,7 @@ targets:
     default: true
 
     variables:
-      experiment_id: "4487885633699270"
+      experiment_id: "33832617697274"
       model_endpoint: "databricks-meta-llama-3-3-70b-instruct"
 
   prod:
